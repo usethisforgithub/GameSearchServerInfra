@@ -491,8 +491,14 @@ public class Driver {
             if(accountList.get(i).getName().equals(h)){
                 if(accountList.get(i).getPasswordHash().equals(passHash)){
                     if(accountList.get(i).isLoggedIn()){
-                        gameServersList.add(new GameServerPA(ip,sname,h,t));
-                        returnVal = 0;
+                        if(!accountList.get(i).isHostingGameServer){
+                            gameServersList.add(new GameServerPA(ip,sname,h,t));
+                            accountList.get(i).setIsHosting(true);
+                            returnVal = 0;
+                        }else{
+                            returnVal = 4; // fishy, account was already hosting
+                        }
+
                     }else{
                         returnVal = 1;//fishy flag, account was not logged in when trying to host
                     }
@@ -527,7 +533,31 @@ public class Driver {
         gameServersListInUse = false;
     }//used to print all gameServers for the user at the server terminal
 
+    public static GameServerPA getGameServerPA(String hName){
 
+        while(connectionsListInUse){
+            try {
+                Thread.sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+
+        connectionsListInUse = true;
+        GameServerPA result = null;
+
+        for(int i = 0; i < gameServersList.size(); i++){
+            if(gameServersList.get(i).getHostAccountName().equals(hName)){
+                result = gameServersList.get(i);
+            }
+
+        }
+
+        connectionsListInUse = false;
+
+        //if name doenst exist, returns null
+        return result;
+    }
 
 
 }

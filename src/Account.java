@@ -2,13 +2,13 @@ public class Account {
     private String name;
     private String passwordHash;
     private boolean loggedIn;
-    boolean hostingGameServer;
+    boolean isHostingGameServer;
 
     public Account(String n, String p){
         name = n;
         passwordHash = p;
         loggedIn = false;
-       // hostingGameServer = false;
+        isHostingGameServer = false;
     }
 
     public int logIn(String passHash){
@@ -56,5 +56,13 @@ public class Account {
 
     public boolean isLoggedIn(){
         return loggedIn;
+    }
+
+    public boolean isHosting(){
+        return isHostingGameServer;
+    }
+
+    public void setIsHosting(Boolean val){
+        isHostingGameServer = val;
     }
 }

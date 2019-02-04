@@ -154,16 +154,29 @@ public class ClientHandler implements Runnable {
         connectionOut.println("OKAY");
         String pass = connectionIn.nextLine();
 
-        if(Driver.addGameServer(socket.getInetAddress().toString().substring(1),serverName,hostName,pass,Thread.currentThread().getId()) == 0){
-            talkToGameServer();
+        int result;
+        result = Driver.addGameServer(socket.getInetAddress().toString().substring(1),serverName,hostName,pass,Thread.currentThread().getId());
+        connectionOut.println(result);
+
+        if(result == 0){
+            talkToGameServer(hostName);
+        }else{
+
         }
 
     }
 
-    private void talkToGameServer(){
+    private void talkToGameServer(String hName){
         boolean mySentinel = true;
-        while(!Thread.currentThread().isInterrupted() && mySentinel){
+        String message = "";
 
+        while(!Thread.currentThread().isInterrupted() && mySentinel){
+            message = connectionIn.nextLine();
+            if(message.equals("OKAY") ){
+
+            }else{
+
+            }
         }
     }
 
