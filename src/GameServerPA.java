@@ -10,6 +10,8 @@ public class GameServerPA {
     private long threadID;
     private ArrayList<Account> connectedClients;
 
+    private int updateIndex;
+
     public GameServerPA(String i,  String sname, String h, long t){
         IP = i;
         //port = p;
@@ -17,6 +19,7 @@ public class GameServerPA {
         hostAccountName = h;
         threadID = t;
         connectedClients = new ArrayList<Account>();
+        updateIndex = 0;
     }
     
     
@@ -57,6 +60,18 @@ public class GameServerPA {
             }
         }
         return false;
+    }
+
+    public int getUpdateIndex(){
+        return updateIndex;
+    }
+
+    public ArrayList<Account> getConnectedClientList(){
+        return connectedClients;
+    }
+
+    private void updateTheIndex(){
+        updateIndex++;
     }
 
 

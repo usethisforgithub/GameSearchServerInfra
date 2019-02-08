@@ -157,11 +157,11 @@ public class ClientHandler implements Runnable {
         int result;
         result = Driver.addGameServer(socket.getInetAddress().toString().substring(1),serverName,hostName,pass,Thread.currentThread().getId());
         connectionOut.println(result);
-
+        connectionIn.nextLine();
         if(result == 0){
             talkToGameServer(hostName);
         }else{
-
+            //goes back to the listening loop
         }
 
     }
@@ -171,13 +171,35 @@ public class ClientHandler implements Runnable {
         String message = "";
 
         while(!Thread.currentThread().isInterrupted() && mySentinel){
+
+            GameServerPA currentServer = Driver.getGameServerPA(hName);
+            connectionOut.println(currentServer.getUpdateIndex());
             message = connectionIn.nextLine();
-            if(message.equals("OKAY") ){
 
+            if(message.equals("OKAY") ) {
+
+            }else if(message.equals("QUIT")){
+                mySentinel = false;
             }else{
+                connectionOut.println(currentServer.getConnectedClientList().size());
+                connectionIn.nextLine();
+                for(int i = 0; i < currentServer.getConnectedClientList().size(); i++ ){
+                    connectionOut.println(currentServer.getConnectedClientList().get(i).getName());
+                    connectionIn.nextLine();
+                    connectionOut.println(currentServer.getConnectedClientList().get(i).getTempKey());
+                    connectionIn.nextLine();
+                }
+            }
 
+            try {
+                Thread.sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
             }
         }
+        //goes back to listening loop
     }
+
+    
 
 }

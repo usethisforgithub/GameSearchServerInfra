@@ -2,13 +2,15 @@ public class Account {
     private String name;
     private String passwordHash;
     private boolean loggedIn;
-    boolean isHostingGameServer;
+    private boolean isHostingGameServer;
+    private int tempKey;
 
     public Account(String n, String p){
         name = n;
         passwordHash = p;
         loggedIn = false;
         isHostingGameServer = false;
+        tempKey = -1; // not on a server
     }
 
     public int logIn(String passHash){
@@ -64,5 +66,13 @@ public class Account {
 
     public void setIsHosting(Boolean val){
         isHostingGameServer = val;
+    }
+
+    public int getTempKey(){
+        return tempKey;
+    }
+
+    public void setTempKey(int val){
+        tempKey = val;
     }
 }
