@@ -1,6 +1,7 @@
 import java.io.IOException;
 import java.io.PrintStream;
 import java.net.Socket;
+import java.util.ArrayList;
 import java.util.Scanner;
 
 public class ClientHandler implements Runnable {
@@ -78,6 +79,20 @@ public class ClientHandler implements Runnable {
 
             case "TRYTOHOST":
                 handleTRYTOHOST();
+                break;
+
+            case "GETSERVERLIST":
+                handleGETSERVERLIST();
+                break;
+
+            case "JOINSERVER":
+                handleJOINSERVER();
+                break;
+
+            case "LEAVESERVER":
+
+            default:
+                System.out.println("Invalid message. Shouldn't get here");
                 break;
         }
     }
@@ -200,6 +215,42 @@ public class ClientHandler implements Runnable {
         //goes back to listening loop
     }
 
-    
+    private void handleGETSERVERLIST(){
+        ArrayList<GameServerPA> temp = Driver.getGameServersList();
+        int iterval = temp.size();
+        connectionOut.println(iterval);
+        connectionIn.nextLine();
+
+
+        for(int i = 0; i < iterval; i++){
+            connectionOut.println(temp.get(i).getServerName());
+            connectionIn.nextLine();
+            connectionOut.println(temp.get(i).getHostAccountName());
+            connectionIn.nextLine();
+            connectionOut.println(temp.get(i).getIP());
+            connectionIn.nextLine();
+        }
+    }
+
+    private void handleJOINSERVER(){
+        connectionOut.println("OKAY");
+        String userName = connectionIn.nextLine();
+        connectionOut.println("OKAY");
+        String userPass = connectionIn.nextLine();
+        connectionOut.println("OKAY");
+        String serverHName = connectionIn.nextLine();
+
+        int didJoinServerWork = Driver.joinServer(userName,userPass,serverHName);
+        connectionOut.println(didJoinServerWork);
+        if(didJoinServerWork == 0){
+            connectionIn.nextLine();
+            connectionOut.println(Driver.getGameServerPA(serverHName).getIP());
+            connectionIn.nextLine();
+        }else{
+            //handle the flag
+        }
+
+    }
+
 
 }

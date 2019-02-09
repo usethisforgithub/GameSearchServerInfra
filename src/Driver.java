@@ -491,7 +491,7 @@ public class Driver {
             if(accountList.get(i).getName().equals(h)){
                 if(accountList.get(i).getPasswordHash().equals(passHash)){
                     if(accountList.get(i).isLoggedIn()){
-                        if(!accountList.get(i).isHostingGameServer){
+                        if(!accountList.get(i).isHosting()){
                             gameServersList.add(new GameServerPA(ip,sname,h,t));
                             accountList.get(i).setIsHosting(true);
                             returnVal = 0;
@@ -535,7 +535,7 @@ public class Driver {
 
     public static GameServerPA getGameServerPA(String hName){
 
-        while(connectionsListInUse){
+        while(gameServersListInUse){
             try {
                 Thread.sleep(10);
             }catch(InterruptedException e){
@@ -543,7 +543,7 @@ public class Driver {
             }
         }
 
-        connectionsListInUse = true;
+        gameServersListInUse = true;
         GameServerPA result = null;
 
         for(int i = 0; i < gameServersList.size(); i++){
@@ -553,10 +553,53 @@ public class Driver {
 
         }
 
-        connectionsListInUse = false;
+        gameServersListInUse = false;
 
         //if name doenst exist, returns null
         return result;
+    }
+
+    public static ArrayList<GameServerPA> getGameServersList(){//only to be used for transmitting the list to the client upon request
+        ArrayList<GameServerPA> returnVal = new ArrayList<>(gameServersList);
+        return returnVal;
+    }
+
+    public static int joinServer(String userName, String userPass, String serverHName){
+        int returnVal =5; //set this
+        while(accountListInUse){
+            try {
+                Thread.sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        accountListInUse = true;
+
+        for(int i = 0; i < accountList.size(); i++){
+            if(accountList.get(i).getName().equals(userName)){
+                if(accountList.get(i).getPasswordHash().equals(userPass)){
+                    if(accountList.get(i).getTempKey() == -1){
+                        if(getGameServerPA(serverHName) != null){
+                            return 0;//worked
+                        }else{
+                            return 1;//server didn't exist
+                        }
+                    }else{
+                        return 2; //server was already logged in
+                    }
+                }else{
+                    return 3;//incorrect password
+                }
+            }else{
+                return 4;//username didn't exist
+            }
+        }
+
+        accountListInUse = false;
+
+        return returnVal;
+
+
     }
 
 
