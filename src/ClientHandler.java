@@ -90,6 +90,8 @@ public class ClientHandler implements Runnable {
                 break;
 
             case "LEAVESERVER":
+                handleLEAVESERVER();
+                break;
 
             default:
                 System.out.println("Invalid message. Shouldn't get here");
@@ -195,6 +197,7 @@ public class ClientHandler implements Runnable {
 
             }else if(message.equals("QUIT")){
                 mySentinel = false;
+                Driver.accountStopHosting(hName);
             }else{
                 connectionOut.println(currentServer.getConnectedClientList().size());
                 connectionIn.nextLine();
@@ -249,6 +252,18 @@ public class ClientHandler implements Runnable {
         }else{
             //handle the flag
         }
+
+    }
+
+    private void handleLEAVESERVER(){
+        connectionOut.println("OKAY");
+        String userName = connectionIn.nextLine();
+        connectionOut.println("OKAY");
+        String userPass = connectionIn.nextLine();
+        connectionOut.println("OKAY");
+        String serverHName = connectionIn.nextLine();
+
+        int didLeaveServerWork = Driver.leaveServer(userName,userPass,serverHName);
 
     }
 

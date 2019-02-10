@@ -1,6 +1,7 @@
 import java.io.*;
 import java.net.Socket;
 import java.util.ArrayList;
+import java.util.Random;
 import java.util.Scanner;
 
 public class Driver {
@@ -580,18 +581,22 @@ public class Driver {
                 if(accountList.get(i).getPasswordHash().equals(userPass)){
                     if(accountList.get(i).getTempKey() == -1){
                         if(getGameServerPA(serverHName) != null){
-                            return 0;//worked
+                            accountList.get(i).setTempKey(new Random().nextInt(99999));
+                            getGameServerPA(serverHName).connectClient(accountList.get(i));//this line might be problematic
+                            returnVal = 0;//worked
+                            accountListInUse = false;
+                            return returnVal;
                         }else{
-                            return 1;//server didn't exist
+                            returnVal = 1;//server didn't exist
                         }
                     }else{
-                        return 2; //server was already logged in
+                        returnVal = 2; //server was already logged in
                     }
                 }else{
-                    return 3;//incorrect password
+                    returnVal = 3;//incorrect password
                 }
             }else{
-                return 4;//username didn't exist
+                returnVal = 4;//username didn't exist
             }
         }
 
@@ -600,6 +605,63 @@ public class Driver {
         return returnVal;
 
 
+    }
+
+    public static int leaveServer(String userName,String userPass,String serverHName){ //probably half baked
+        int returnVal = 5; //set this
+        while(accountListInUse){
+            try {
+                Thread.sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        accountListInUse = true;
+
+        for(int i = 0; i < accountList.size(); i++){
+            if(accountList.get(i).getName().equals(userName)){
+                if(accountList.get(i).getPasswordHash().equals(userPass)){
+                    if(accountList.get(i).getTempKey() != -1){
+                        if(getGameServerPA(serverHName) != null){
+                            getGameServerPA(serverHName).disconnectClient(accountList.get(i));
+                            accountList.get(i).setTempKey(-1);
+                            accountListInUse = false;
+                            return 0;
+                        }else{
+                            returnVal = 1;
+                        }
+                    }else{
+                        returnVal = 2;
+                    }
+                }else{
+                    returnVal = 3;
+                }
+            }else{
+                returnVal = 4;
+            }
+        }
+
+        accountListInUse = false;
+        return returnVal;
+    }
+
+    public static void accountStopHosting(String hName){
+        while(accountListInUse){
+            try {
+                Thread.sleep(10);
+            }catch(InterruptedException e){
+                e.printStackTrace();
+            }
+        }
+        accountListInUse = true;
+
+        for(int i = 0; i < accountList.size(); i++){
+            if(accountList.get(i).getName().equals(hName)){
+                accountList.get(i).setIsHosting(false);
+            }
+        }
+
+        accountListInUse = false;
     }
 
 

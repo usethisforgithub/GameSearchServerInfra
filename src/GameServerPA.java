@@ -49,13 +49,18 @@ public class GameServerPA {
                 return false;
             }
         }
-        return connectedClients.add(account);
+        boolean returnVal = connectedClients.add(account);
+        if(returnVal){
+            updateIndex++;
+        }
+        return returnVal;
     }
     
     public boolean disconnectClient(Account account){
 
         for(int i = 0; i < connectedClients.size(); i++){
             if(connectedClients.get(i).getName().equals(account.getName())){
+                updateIndex++;
                 return connectedClients.remove(account);
             }
         }
@@ -70,9 +75,9 @@ public class GameServerPA {
         return connectedClients;
     }
 
-    private void updateTheIndex(){
-        updateIndex++;
-    }
+   // private void updateTheIndex(){
+       // updateIndex++;
+    //}
 
 
 
